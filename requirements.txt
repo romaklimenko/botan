@@ -1,4 +1,4 @@
 APScheduler==3.0.0
-requests==2.19.1
+requests==2.20.0
 pymongo==3.7.1
 dnspython==1.16.0
