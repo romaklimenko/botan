@@ -24,10 +24,6 @@ def load(filename):
   with open(filename, 'r') as file:
     return json.load(file)
 
-def save(obj, filename, sort_keys=True):
-  with open(filename, 'w') as file:
-    json.dump(obj, file, ensure_ascii=False, indent=2, sort_keys=True)
-
 def get_answer(body):
   answers = load('botan.json')
   if ' бот.' in body:
@@ -348,76 +344,9 @@ def post_domains_stats(epoch_from, epoch_to, domain_prefix='staging'):
 
   requests.post(f'https://d3.ru/api/drafts/{draft_id}/publish/?domain_prefix={domain_prefix}', headers=headers)
 
-# короновирусники
-coronavirus = [
-  'coronavirus',
-  'coronahumor',
-  'koronavirus'
-]
-
-# политические
-politics = [
-  '_________',
-  '__________',
-  'anecdot',
-  'alles',
-  'around',
-  'besit',
-  'brooks',
-  'citatio',
-  'cmex',
-  'crime',
-  'coronavirus',
-  'demokratia',
-  'fognews',
-  'fotka',
-  'georgia',
-  'glupoff',
-  'history',
-  'holodilnik',
-  'hrenovosti',
-  'interesting',
-  'kocmoc',
-  'komhata_cmexa',
-  'kucha',
-  'kushavera',
-  'leonnetrotsky',
-  'lopata',
-  'memo',
-  'mom',
-  'moscow',
-  'navalny',
-  'news',
-  'oldrover_huj',
-  'pechal',
-  'pizdets',
-  'polit_satira',
-  'polithumor',
-  'politegs',
-  'politics',
-  'politika',
-  'politota',
-  'polka',
-  'porebrik',
-  'proisshestviya',
-  'radnevi',
-  'riffleks',
-  'rolitics',
-  'shadow',
-  'shapito',
-  'shestakov',
-  'short',
-  'story_from_life',
-  'telega',
-  'traktor',
-  'trollitics',
-  'uc',
-  'war',
-  # 'youtube',
-  'zametki',
-]
-
 def get_warning(domain_prefix):
+  coronavirus = load('coronavirus.json')
+  politics = load('politics.json')
   if domain_prefix in coronavirus:
     return '🦠'
   elif domain_prefix in politics:
