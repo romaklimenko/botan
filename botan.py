@@ -159,7 +159,7 @@ def save_domains():
             threshold = 1
 
           if abs(readers_count_change) < threshold:
-            if abs(readers_count_change) >= threshold / 2:
+            if abs(readers_count_change) >= threshold * 0.75:
               print(f'[-] {domain["prefix"]}\treaders: {domain["readers_count"]}\tchange: {readers_count_change}\tmust be: {threshold}')
             continue
 
