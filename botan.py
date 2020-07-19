@@ -256,10 +256,14 @@ def save_posts():
           'views_count': views_count,
           'first_seen': now,
           'last_seen': now,
-          'minutes': 10
+          'minutes': 10,
+          'checkpoints': [ now ]
         }
         posts_collection.insert_one(doc)
       else:
+        checkpoints = doc['checkpoints']
+        checkpoints.append(now)
+
         doc['title'] = post['title']
         doc['domain'] = post['domain']['prefix']
         doc['golden'] = post['golden']
@@ -268,6 +272,7 @@ def save_posts():
         doc['views_count'] = views_count
         doc['last_seen'] = now
         doc['minutes'] += 10
+        doc['checkpoints'] = checkpoints
         posts_collection.save(doc)
     except Exception as e:
       print(e)
