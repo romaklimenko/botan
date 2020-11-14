@@ -82,7 +82,7 @@ def reply_all():
     domain = notification['data']['comment']['domain']['prefix']
     user = notification['data']['comment']['user']['login']
     body = notification['data']['comment']['body']
-    if domain not in ['dataisbeautiful', 'etymology', 'denmark', 'romaklimenko', 'reports', 'unsplash'] and user != 'romaklimenko':
+    if domain not in ['dataisbeautiful', 'etymology', 'denmark', 'romaklimenko', 'reports', 'unsplash', 'adm', 'lyrics', 'notes'] and user != 'romaklimenko':
       continue
     print(f'post_id: {post_id}, comment_id: {comment_id}, user: {user}, domain: {domain}')
     print('\n')
