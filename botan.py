@@ -578,3 +578,97 @@ def random_post():
   print('id', draft_id)
   requests.post(f'https://d3.ru/api/drafts/{draft_id}/publish/?domain_prefix={domain_prefix}', headers=headers)
   drafts_collection.update_one({ '_id': draft_id }, { '$set': { 'published': 1 } })
+
+def get_reddit_post(subreddit):
+  url = f'https://www.reddit.com/r/{subreddit}/top/.json?t=week'
+  posts = requests.get(url, headers = {'User-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'}).json()
+
+  client = MongoClient(os.environ['MONGO'])
+  db = client['dirty']
+  reddit_collection = db['reddit']
+
+  for post in posts['data']['children']:
+    if reddit_collection.find_one({ '_id': post['data']['id'] }) != None:
+      print(f'Пост {post["data"]["id"]} уже был обработан. Пропускаем.')
+      continue
+    if 'url_overridden_by_dest' not in post['data'] or post['data']['url_overridden_by_dest'] == '':
+      continue
+
+    return post
+
+def post_from_reddit(reddit_post, domain_prefix):
+  if reddit_post == None:
+    print(f'Не передан reddit-пост для публикации.')
+    return
+  reddit_post_id = reddit_post['data']['id']
+  title = reddit_post['data']['title'][0:140]
+  image_src = reddit_post['data']['url_overridden_by_dest']
+  link = f'https://reddit.com{reddit_post["data"]["permalink"]}'
+  body = f'{reddit_post["data"]["title"]}<br><a href="https://reddit.com{reddit_post["data"]["permalink"]}">Отсюда</a>.'
+
+  print(reddit_post_id, title, link, image_src, domain_prefix)
+
+  data = {
+    'data': {
+      'type': 'link',
+      'title': title,
+      'media': {
+        'url': get_image_source(image_src)
+      },
+      'link': {
+        'url': link
+      },
+      'text': body
+    }
+  }
+
+  client = MongoClient(os.environ['MONGO'])
+  db = client['dirty']
+  reddit_collection = db['reddit']
+
+  draft_response = requests.post('https://d3.ru/api/drafts/', headers=headers, json=data)
+  if not draft_response.ok:
+    print(draft_response)
+    reddit_collection.insert_one({
+      '_id': reddit_post_id,
+      'status_code': draft_response.status_code,
+      'text': draft_response.text
+    })
+    return
+  draft = draft_response.json()
+  draft_id = draft['id']
+
+  response = requests.post(f'https://d3.ru/api/drafts/{draft_id}/publish/?domain_prefix={domain_prefix}', headers=headers)
+  if not response.ok:
+    print(response.text)
+    reddit_collection.insert_one({
+      '_id': reddit_post_id,
+      'status_code': response.status_code,
+      'text': response.text
+    })
+    return
+  result = response.json()
+
+  result['_id'] = reddit_post_id
+  reddit_collection.insert_one(result)
+
+  return result
+
+
+def get_image_source(src):
+  ajax_headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Cookie': f'uid={os.environ["BOTAN_UID"]}; sid={os.environ["BOTAN_SID"]};'
+  }
+
+  data = {
+    'url': src,
+    'csrf_token': os.environ['BOTAN_CSRF']
+  }
+
+  response = requests.post('https://d3.ru/ajax/urls/info/', headers=ajax_headers, data=data).json()
+
+  if response['status'] == 'OK':
+    return response['stored_location']
+  else:
+    return None
