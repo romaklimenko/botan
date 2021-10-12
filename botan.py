@@ -158,6 +158,12 @@ def save_domains():
           elif epoch_change < 60 * 60 * 24:
             threshold = 1
 
+          try: # smells bad, but it's ok
+            if domain['owner']['login'] == 'r10o':
+              threshold = 1
+          except Exception as e:
+            print('domain owner', e)
+
           if abs(readers_count_change) < threshold:
             if abs(readers_count_change) >= threshold * 0.75:
               print(f'[-] {domain["prefix"]}\treaders: {domain["readers_count"]}\tchange: {readers_count_change}\tmust be: {threshold}')
