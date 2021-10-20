@@ -210,7 +210,10 @@ def cache_domains():
     if domain['_id']['prefix'] in prefixes:
       continue
 
+
     domain_info = requests.get(f'https://d3.ru/api/domains/{domain["_id"]["prefix"]}').json()
+    if 'readers_count' not in domain_info:
+      continue
     new_readers_count = domain_info['readers_count']
     old_readers_count = domain['readers_count'] - domain['readers_count_change']
     readers_count_change = domain_info['readers_count'] - old_readers_count
@@ -226,6 +229,7 @@ def cache_domains():
       'epoch_from': domain['_id']['epoch'] - domain['epoch_change'],
       'epoch_to': domain['_id']['epoch'],
       'epoch_change': domain['epoch_change'],
+      'owner': domain_info['owner']['login'],
     })
 
     prefixes.add(domain['_id']['prefix'])
