@@ -144,6 +144,13 @@ def save_domains():
 
         readers_count_change = 0
 
+        domain_owner = ''
+
+        try:
+          domain_owner = domain['owner']['login']
+        except Exception as e:
+          print('domain_owner', e)
+
         if previous == None:
           readers_count_change = 0
           epoch_change = 0
@@ -158,11 +165,9 @@ def save_domains():
           elif epoch_change < 60 * 60 * 24:
             threshold = 1
 
-          try: # smells bad, but it's ok
-            if domain['owner']['login'] == 'r10o':
-              threshold = 1
-          except Exception as e:
-            print('domain owner', e)
+
+          if domain_owner == 'r10o':
+            threshold = 1
 
           if abs(readers_count_change) < threshold:
             if abs(readers_count_change) >= threshold * 0.75:
@@ -173,7 +178,8 @@ def save_domains():
           '_id': _id,
           'readers_count': domain['readers_count'],
           'readers_count_change': readers_count_change,
-          'epoch_change': epoch_change
+          'epoch_change': epoch_change,
+          'owner': domain_owner,
         }
 
         print(f'[+] {doc["_id"]["prefix"]}\treaders: {doc["readers_count"]}\tchange: {doc["readers_count_change"]}')
