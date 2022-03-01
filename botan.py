@@ -186,7 +186,7 @@ def save_domains():
 
         domains_collection.replace_one({ '_id': _id }, doc, upsert=True)
       except Exception as e:
-        print(e)
+        print('domain', domain, e)
 
   print(f'save domains done in {(time.time() - epoch) / 60} minutes')
 
