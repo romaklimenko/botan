@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: save-domains
+  labels:
+    app: botan
+spec:
+  schedule: {{ .Values.schedules.saveDomains | quote }}
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 60
+      template:
+        spec:
+          containers:
+            - name: save-domains
+              image: {{ .Values.image | quote }}
+              env:
+                - name: MONGO
+                  valueFrom:
+                    secretKeyRef:
+                      name: botan
+                      key: atlas
+              command:
+                - python
+                - ./app/save_domains.py
+          restartPolicy: Never
+          {{- if (not (empty .Values.imagePullSecrets)) }}
+          imagePullSecrets:
+            {{- range .Values.imagePullSecrets }}
+            - name: {{ . | quote }}
+            {{- end }}
+          {{ end }}
+      backoffLimit: 1

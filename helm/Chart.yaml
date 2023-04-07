@@ -1,0 +1,7 @@
+apiVersion: v2
+name: botan
+
+sources:
+  - "https://github.com/romaklimenko/botan"
+
+version: 0.1.0

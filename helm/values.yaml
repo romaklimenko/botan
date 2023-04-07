@@ -1,0 +1,8 @@
+schedules:
+  savePosts: "*/10 * * * *"
+  saveDomains: "0 * * * *"
+
+image: "romaklimenko.azurecr.io/botan:latest"
+
+imagePullSecrets:
+- "acr-pull-secret"
