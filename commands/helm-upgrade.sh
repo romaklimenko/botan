@@ -1,1 +1,1 @@
-helm upgrade botan ./helm --install --namespace dirty --set atlas=$ATLAS
+helm upgrade botan ./helm --install --history-max 3 --set atlas=$ATLAS
