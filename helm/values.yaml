@@ -5,4 +5,6 @@ schedules:
 image: "romaklimenko.azurecr.io/botan:latest"
 
 imagePullSecrets:
-- "acr-pull-secret"
+- "acr-pull"
+
+atlas: ""

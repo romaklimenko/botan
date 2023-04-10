@@ -1,24 +1,24 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: save-posts
+  name: posts
   labels:
     app: botan
 spec:
   schedule: {{ .Values.schedules.savePosts | quote }}
   jobTemplate:
     spec:
-      ttlSecondsAfterFinished: 60
+      ttlSecondsAfterFinished: 300
       template:
         spec:
           containers:
-            - name: save-posts
+            - name: posts
               image: {{ .Values.image | quote }}
               env:
                 - name: MONGO
                   valueFrom:
                     secretKeyRef:
-                      name: botan
+                      name: atlas
                       key: atlas
               command:
                 - python
