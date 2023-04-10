@@ -1,6 +1,6 @@
 schedules:
   savePosts: "*/10 * * * *"
-  saveDomains: "0 * * * *"
+  saveDomains: "30 * * * *"
 
 image: "romaklimenko.azurecr.io/botan:latest"
 
