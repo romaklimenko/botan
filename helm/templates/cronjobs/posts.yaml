@@ -5,16 +5,18 @@ metadata:
   labels:
     app: botan
 spec:
-  schedule: {{ .Values.schedules.savePosts | quote }}
+  schedule: {{ .Values.posts.schedule | quote }}
   jobTemplate:
     spec:
-      ttlSecondsAfterFinished: 300
+      ttlSecondsAfterFinished: {{ .Values.posts.ttlSecondsAfterFinished }}
       template:
         spec:
           containers:
             - name: posts
               image: {{ .Values.image | quote }}
               env:
+                - name: PYTHONUNBUFFERED
+                  value: "true"
                 - name: MONGO
                   valueFrom:
                     secretKeyRef:

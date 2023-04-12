@@ -1,10 +1,14 @@
-schedules:
-  savePosts: "*/10 * * * *"
-  saveDomains: "30 * * * *"
-
 image: "romaklimenko.azurecr.io/botan:latest"
 
 imagePullSecrets:
 - "acr-pull"
 
 atlas: ""
+
+posts:
+  schedule: "*/10 * * * *"
+  ttlSecondsAfterFinished: 60
+
+domains:
+  schedule: "0 * * * *"
+  ttlSecondsAfterFinished: 60
