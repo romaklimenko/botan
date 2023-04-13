@@ -178,7 +178,7 @@ def save_posts():
         try:
             post_response = requests.get(
                 f'https://d3.ru/api/posts/{post["id"]}').json()
-            # print(f'https://d3.ru/{post["id"]}/')
+            print(f'https://d3.ru/{post["id"]}: "{post["title"]}", {post["domain"]["prefix"]}, {post["user"]["login"]}')
             views_count = post_response['views_count']
 
             now = time.time()
