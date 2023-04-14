@@ -20,7 +20,7 @@ spec:
                 - name: MONGO
                   valueFrom:
                     secretKeyRef:
-                      name: atlas
+                      name: atlas-credentials
                       key: atlas
               command:
                 - python
